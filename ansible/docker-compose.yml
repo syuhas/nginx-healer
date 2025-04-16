@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    container_name: webhook
+    image: webhook:latest
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - ANSIBLE_SSH_ARGS=-o StrictHostKeyChecking=no

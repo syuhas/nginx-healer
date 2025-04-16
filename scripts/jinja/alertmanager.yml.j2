@@ -1,0 +1,15 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: "webhook"
+  group_by: [ 'alertname' ]
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 5s
+
+receivers:
+- name: "webhook"
+  webhook_configs:
+  - url: "http://{{ ansible_server }}:8000/webhook"
+    send_resolved: true

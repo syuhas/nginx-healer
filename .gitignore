@@ -1,0 +1,26 @@
+#  ignore all python type files
+
+*/venv
+venv
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+*.whl
+*.mypy_cache/
+*.pytest_cache/
+*.coverage
+*.cover
+*.hypothesis/
+*.tox/
+*.coverage.*
+*.DS_Store
+*.ipynb_checkpoints
+*.idea/
+*.vscode/
+*.log
+*.sqlite3
+*.db
+*.pem

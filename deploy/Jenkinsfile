@@ -1,0 +1,12 @@
+pipeline {
+    agent any
+    environment {
+        project_name = "self-healer"
+        region = "us-east-1"
+        AWS_ACCOUNT_ID = "551796573889"
+    }
+
+    stages {
+        stage('Output Environment Variables')
+    }
+}

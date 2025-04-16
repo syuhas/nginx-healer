@@ -1,0 +1,34 @@
+services:
+    nginx:
+        image: syuhas/nginx:latest
+        container_name: nginx
+        ports:
+            - "80:80"
+        networks:
+            - nginx
+
+    nginx-prometheus-exporter:
+        image: nginx/nginx-prometheus-exporter:1.4.0
+        container_name: nginx-exporter
+        ports:
+            - :9113:9113
+        networks:
+            - nginx
+        command: --nginx.scrape-uri=http://nginx/metrics
+        depends_on:
+            - nginx
+        restart: always
+
+    node-exporter:
+        image: quay.io/prometheus/node-exporter:latest
+        container_name: node-exporter
+        network_mode: host
+        pid: "host"
+        volumes:
+            - "/:/host:ro,rslave"
+        command: --path.rootfs=/host
+        restart: unless-stopped
+
+networks:
+    nginx:
+       driver: bridge
