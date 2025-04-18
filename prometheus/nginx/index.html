@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <style>
+        /* Custom Styles */
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #24292f, #2a2f37);
+            color: #fff;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Arial', sans-serif;
+            font-size: 3rem;
+            font-weight: bold;
+            color: whitesmoke;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-family: 'Arial', sans-serif;
+            font-size: 1.5rem;
+            color: #FFFFFF;
+            font-weight: normal;
+            text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.6);
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .card-deck {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            width: 300px;
+            height: 300px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            background-color: #333333;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            transform: scale(1.02);
+            background-color: #444444;
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-body i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #A8D08D;
+            transition: color 0.3s ease;
+        }
+
+        .card-body i:hover {
+            color: #fff;
+        }
+
+        .card-title {
+            color: #FFF;
+        }
+
+        .card-text {
+            color: #FFFFFF;
+            text-align: center;
+        }
+
+        .card-body a {
+            text-decoration: none;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            & p {
+                margin: 0;
+                font-size: 1rem;
+                font-weight: lighter;
+            }
+        }
+
+        .card-body a:hover {
+            color: #FFF;
+            /* text-decoration: underline; */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                height: auto;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                /* Slightly smaller title font on smaller screens */
+            }
+
+            h2 {
+                font-size: 1.2rem;
+                /* Adjust subtitle for smaller screens */
+                margin-bottom: 30px;
+            }
+
+            .card-deck {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card {
+                width: 100%;
+                max-width: 320px;
+                /* Restrict max-width to ensure card is not too large */
+                height: auto;
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Keyframes for the fade-in effect */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Monitoring Hub</h1>
+        <h2>Quick Access to Grafana, Prometheus, and AlertManager</h2>
+
+        <div class="card-deck">
+            <!-- Grafana Card -->
+            <div class="card">
+                <div class="card-body">
+
+                    <a href="/grafana" target="_blank">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <h3 class="card-title">Grafana</h3>
+                        <p class="card-text">Monitoring dashboards and visualiztions.</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Prometheus Card -->
+            <div class="card">
+                <div class="card-body">
+                    <a href="/prometheus" target="_blank">
+                        <i class="fas fa-server"></i>
+                        <h3 class="card-title">Prometheus</h3>
+                        <p class="card-text">Metrics collection and alerting.</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- AlertManager Card -->
+            <div class="card">
+                <div class="card-body">
+
+                    <a href="/alertmanager" target="_blank">
+                        <i class="fas fa-bell"></i>
+                        <h3 class="card-title">AlertManager</h3>
+                        <p class="card-text">Manage sending alerts and notifications.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

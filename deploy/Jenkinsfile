@@ -1,12 +1,21 @@
 pipeline {
     agent any
     environment {
-        project_name = "self-healer"
-        region = "us-east-1"
+        PROJECT = "self-healer"
+        AWS_REGION = "us-east-1"
         AWS_ACCOUNT_ID = "551796573889"
     }
 
     stages {
-        stage('Output Environment Variables')
+        stage('Output Environment Variables') {
+            steps {
+                env.TF_VAR_project_name = "${PROJECT}"
+                env.TF_VAR_aws_region = "${AWS_REGION}"
+                env.TF_VAR_aws_account_id = "${AWS_ACCOUNT_ID}"
+                echo "Project Name: ${env.TF_VAR_project_name}"
+                echo "AWS Region: ${env.TF_VAR_aws_region}"
+                echo "AWS Account ID: ${env.TF_VAR_aws_account_id}"
+            }
+        }
     }
 }

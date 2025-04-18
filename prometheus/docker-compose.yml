@@ -5,11 +5,17 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./alert.rules.yml:/etc/prometheus/alert.rules.yml
-      - ./alerts.yml:/etc/prometheus/alerts.yml
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/alert.rules.yml:/etc/prometheus/alert.rules.yml
     networks:
       - monitoring
+    command:
+      - --web.route-prefix=/
+      - --web.external-url=http://monitoring.digitalsteve.net/prometheus/
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
 
   alertmanager:
     image: prom/alertmanager
@@ -17,7 +23,7 @@ services:
     ports:
       - "9093:9093"
     volumes:
-      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - ./config/alertmanager.yml:/etc/alertmanager/alertmanager.yml
     networks:
       - monitoring
 
@@ -32,6 +38,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana-storage:/var/lib/grafana
+      - ./config/grafana.ini:/etc/grafana/grafana.ini
     depends_on:
       - prometheus
 
