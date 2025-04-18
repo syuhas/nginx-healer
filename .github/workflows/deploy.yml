@@ -17,7 +17,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: 'us-east-1'
+        aws-region: us-east-1
 
     - name: Install Terraform
       run: |
@@ -25,14 +25,18 @@ jobs:
         echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
         sudo apt update && sudo apt install terraform
 
-    - name: Initialize Terraform
-      run: terraform -chdir=deploy init
+    - name: Test aws credentials
+      run: |
+        aws sts get-caller-identity
+        aws ec2 describe-instances
+    # - name: Initialize Terraform
+    #   run: terraform -chdir=deploy init
 
-    - name: Run Terraform Plan
-      run: terraform -chdir=deploy plan -out=plan.tfplan ./deploy
+    # - name: Run Terraform Plan
+    #   run: terraform -chdir=deploy plan -out=plan.tfplan ./deploy
 
-    - name: Apply Terraform Plan
-      run: terraform -chdir=deploy apply plan.tfplan -auto-approve ./deploy
+    # - name: Apply Terraform Plan
+    #   run: terraform -chdir=deploy apply plan.tfplan -auto-approve ./deploy
 
-    - name: Show EC2 Instance IPs
-      run: terraform -chdir=deploy output
+    # - name: Show EC2 Instance IPs
+    #   run: terraform -chdir=deploy output
