@@ -26,13 +26,13 @@ jobs:
         sudo apt update && sudo apt install terraform
 
     - name: Initialize Terraform
-      run: terraform init ./deploy
+      run: terraform -chdir=deploy init
 
     - name: Run Terraform Plan
-      run: terraform plan -out=plan.tfplan ./deploy
+      run: terraform -chdir=deploy plan -out=plan.tfplan ./deploy
 
     - name: Apply Terraform Plan
-      run: terraform apply plan.tfplan -auto-approve ./deploy
+      run: terraform -chdir=deploy apply plan.tfplan -auto-approve ./deploy
 
     - name: Show EC2 Instance IPs
-      run: terraform output
+      run: terraform -chdir=deploy output
