@@ -24,8 +24,8 @@ pipeline {
         stage('Initialize Terraform') {
             steps {
                 script {
-                    'terraform -chdir=deploy init'
-                    'terraform -chdir=deploy plan -out=plan.tfplan'
+                    sh 'terraform -chdir=deploy init'
+                    sh 'terraform -chdir=deploy plan -out=plan.tfplan'
                 }
             }
         }
