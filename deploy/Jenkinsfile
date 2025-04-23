@@ -25,21 +25,18 @@ pipeline {
             steps {
                 script {
                     sh 'terraform -chdir=deploy init'
-                    sh 'terraform -chdir=deploy plan -out=plan.tfplan'
                 }
             }
         }
-
-        stage('Apply Terraform Infrastructure') {
+        stage('Plan Terraform') {
             steps {
                 script {
                     sh 'terraform -chdir=deploy plan -out=plan.tfplan'
-                    
                 }
             }
         }
 
-        stage('Deploy Instances') {
+        stage('Apply Terraform') {
             steps {
                 script {
                     sh 'terraform -chdir=deploy apply plan.tfplan'
