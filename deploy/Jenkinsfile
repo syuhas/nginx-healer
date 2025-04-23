@@ -24,8 +24,8 @@ pipeline {
         stage('Initialize Terraform') {
             steps {
                 script {
-                    sh 'terraform -chdir=deploy init'
-                    sh 'terraform -chdir=deploy plan -out=plan.tfplan'
+                    'terraform -chdir=deploy init'
+                    'terraform -chdir=deploy plan -out=plan.tfplan'
                 }
             }
         }
@@ -42,12 +42,10 @@ pipeline {
         stage('Deploy Instances') {
             steps {
                 script {
-                    dir('deploy') {
-                        sh 'terraform -chdir=deploy apply plan.tfplan'
-                        env.ANSIBLE_IP = sh(script: 'terraform output -raw ansible_ip', returnStdout: true).trim()
-                        env.PROMETHEUS_IP = sh(script: 'terraform output -raw prometheus_ip', returnStdout: true).trim()
-                        env.NGINX_IP = sh(script: 'terraform output -raw nginx_ip', returnStdout: true).trim()
-                    }
+                    sh 'terraform -chdir=deploy apply plan.tfplan'
+                    env.ANSIBLE_IP = sh(script: 'terraform output -raw ansible_ip', returnStdout: true).trim()
+                    env.PROMETHEUS_IP = sh(script: 'terraform output -raw prometheus_ip', returnStdout: true).trim()
+                    env.NGINX_IP = sh(script: 'terraform output -raw nginx_ip', returnStdout: true).trim()
                 }
             }
         }
