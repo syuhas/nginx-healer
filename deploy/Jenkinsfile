@@ -43,10 +43,10 @@ pipeline {
             steps {
                 script {
                     dir('deploy') {
-                        sh 'terraform apply -auto-approve plan.tfplan'
-                        env.ANSIBLE_IP = sh(script: 'terraform output -json | jq -r "ansible_ip.value"', returnStdout: true).trim()
-                        env.PROMETHEUS_IP = sh(script: 'terraform output -json | jq -r "prometheus_ip.value"', returnStdout: true).trim()
-                        env.NGINX_IP = sh(script: 'terraform output -json | jq -r "nginx_ip.value"', returnStdout: true).trim()
+                        sh 'terraform -chdir=deploy apply plan.tfplan'
+                        env.ANSIBLE_IP = sh(script: 'terraform output -raw ansible_ip', returnStdout: true).trim()
+                        env.PROMETHEUS_IP = sh(script: 'terraform output -raw prometheus_ip', returnStdout: true).trim()
+                        env.NGINX_IP = sh(script: 'terraform output -raw nginx_ip', returnStdout: true).trim()
                     }
                 }
             }
