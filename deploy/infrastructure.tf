@@ -61,10 +61,11 @@ resource "aws_instance" "ansible" {
   }
 }
 
-resource "aws_route53_record" "name" {
+resource "aws_route53_record" "monitor" {
   zone_id = "Z02299283BLAIJGG9JHMK"
   name    = "monitor.digitalsteve.net"
   type    = "A"
+  ttl     = 300
   records = [aws_instance.prometheus.public_ip]
   
 }
