@@ -14,7 +14,6 @@ set -x
 AIP="${ANSIBLE_IP}"
 PIP="${PROMETHEUS_IP}"
 NIP="${NGINX_IP}"
-USER="ec2-user"
 
 if [ -z "$AIP" ] || [ -z "$PIP" ] || [ -z "$NIP" ]; then
   echo "Error: One or more IP addresses are not set. Please check your Terraform outputs."
@@ -52,21 +51,21 @@ scp -o StrictHostKeyChecking=no -r ../prometheus "$USER@$PIP:/home/$USER/app"
 scp -o StrictHostKeyChecking=no build.sh "$USER@$PIP:/home/$USER/app"
 
 # build ansible server
-ssh -o StricHostKeyChecking=no "$USER@$AIP" << EOF
+ssh -o StrictHostKeyChecking=no "$USER@$AIP" << EOF
     cd /home/$USER/app
     chmod +x build.sh
     ./build.sh
 EOF
 
 # build nginx server
-ssh -o StricHostKeyChecking=no "$USER@$NIP" << EOF
+ssh -o StrictHostKeyChecking=no "$USER@$NIP" << EOF
     cd /home/$USER/app
     chmod +x build.sh
     ./build.sh
 EOF
 
 # build prometheus server
-ssh -o StricHostKeyChecking=no "$USER@$PIP" << EOF
+ssh -o StrictHostKeyChecking=no "$USER@$PIP" << EOF
     cd /home/$USER/app
     chmod +x build.sh
     ./build.sh
