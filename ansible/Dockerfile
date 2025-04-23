@@ -7,8 +7,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN export ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no"
-
 RUN pip3 install -e .
 
 

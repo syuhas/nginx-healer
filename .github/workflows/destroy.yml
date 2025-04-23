@@ -26,13 +26,13 @@ jobs:
         sudo apt update && sudo apt install terraform
 
     - name: Initialize Terraform
-      run: terraform -chdir=deploy init ./deploy
+      run: terraform -chdir=deploy init
 
     - name: Terraform Plan Destroy
-      run: terraform -chdir=deploy plan -destroy -out=plan.tfplan ./deploy
+      run: terraform -chdir=deploy plan -destroy -out=plan.tfplan
 
     - name: Terraform Apply Destroy
-      run: terraform -chdir=deploy apply -auto-approve ./deploy
+      run: terraform -chdir=deploy apply plan.tfplan
 
     - name: Show Destruction Status
       run: echo "Infrastructure has been destroyed."

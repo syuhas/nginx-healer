@@ -2,7 +2,7 @@
   hosts: nginx_servers
   tasks:
   - name: Docker Compose Down For Nginx Monitoring Stack
-    ansible.builtin.shell: "docker-compose --project-directory /home/ec2-user down"
+    ansible.builtin.shell: "docker-compose --project-directory /home/ec2-user/app down"
 
   - name: Docker Compose Up For Nginx Monitoring Stack
-    ansible.builtin.shell: "docker-compose --project-directory /home/ec2-user up -d"
+    ansible.builtin.shell: "docker-compose --project-directory /home/ec2-user/app up -d"

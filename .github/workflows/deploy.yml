@@ -29,10 +29,10 @@ jobs:
       run: terraform -chdir=deploy init
 
     - name: Run Terraform Plan
-      run: terraform -chdir=deploy plan -out=plan.tfplan ./deploy
+      run: terraform -chdir=deploy plan -out=plan.tfplan
 
     - name: Apply Terraform Plan
-      run: terraform -chdir=deploy apply plan.tfplan -auto-approve ./deploy
+      run: terraform -chdir=deploy apply plan.tfplan
 
     - name: Show EC2 Instance IPs
       run: terraform -chdir=deploy output

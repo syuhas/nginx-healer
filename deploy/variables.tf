@@ -1,5 +1,5 @@
-variable "project" {
-  default = "devops-exercise-jenkins"
+variable "project_name" {
+  default = "nginx-healer"
 }
 variable "aws_region" {
   default = "us-east-1"

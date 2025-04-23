@@ -17,5 +17,54 @@ pipeline {
                 echo "AWS Account ID: ${env.TF_VAR_aws_account_id}"
             }
         }
+
+        stage('Initialize Terraform') {
+            steps {
+                script {
+                    sh 'terraform -chdir=deploy init'
+                    sh 'terraform -chdir=deploy plan -out=plan.tfplan'
+                }
+            }
+        }
+
+        stage('Apply Terraform Infrastructure') {
+            steps {
+                script {
+                    sh 'terraform -chdir=deploy plan -out=plan.tfplan'
+                    
+                }
+            }
+        }
+
+        stage('Deploy Instances') {
+            steps {
+                script {
+                    dir('deploy') {
+                        sh 'terraform apply -auto-approve plan.tfplan'
+                        env.ANSIBLE_IP = sh(script: 'terraform output -json | jq -r "ansible_ip.value"', returnStdout: true).trim()
+                        env.PROMETHEUS_IP = sh(script: 'terraform output -json | jq -r "prometheus_ip.value"', returnStdout: true).trim()
+                        env.NGINX_IP = sh(script: 'terraform output -json | jq -r "nginx_ip.value"', returnStdout: true).trim()
+                    }
+                }
+            }
+        }
+
+        stage('Build Servers') {
+            steps {
+                script {
+                    dir('deploy') {
+                        sh '''
+                            chmod +x deploy.sh
+                            ./deploy.sh
+                        '''
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+        }
     }
 }

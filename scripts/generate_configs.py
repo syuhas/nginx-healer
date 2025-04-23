@@ -1,3 +1,24 @@
+
+# Jinja2 will generate server configs for Prometheus, Alertmanager, and Ansible using the newly provisioned server IPs.
+#
+# ------------------------------------------------------------------------------------------------------------------
+#
+# Usage: python3 generate_configs.py <command> <args>
+#
+#
+# Example: Generate Prometheus config file
+#   - python3 generate_configs.py gp <nginx_server_ip>
+
+# Example: Generate Alertmanager config file
+#   - python3 generate_configs.py gam <ansible_server_ip>
+
+# Example: Generate Ansible inventory file
+#   - python3 generate_configs.py gan <nginx_server_ip>
+
+# Example: Generate all configs
+#   - python3 generate_configs.py gall <nginx_server_ip> <ansible_server_ip>
+#
+
 import yaml
 from jinja2 import Environment, FileSystemLoader
 from pathlib import Path
@@ -13,7 +34,7 @@ pathansible = Path(f'{parentdir}/ansible/config').resolve()
 
 @app.command()
 # Write a help message for the command
-def gp(nginx_server: str = Argument(..., help="Generate the Prometheus config: nginx_server=<nginx_server>")):
+def gp(nginx_server: str = Argument(..., help="Generate the Prometheus config: nginx_server=<nginx_server_ip>")):
     """
     Generate the Prometheus Config File (prometheus.yml) for the Prometheus server.
     [params: nginx_server: IP address of the Nginx server]
@@ -32,7 +53,7 @@ def gp(nginx_server: str = Argument(..., help="Generate the Prometheus config: n
     logger.info(f'Prometheus config generated prometheus/config/prometheus.yml: {nginx_server}')
 
 @app.command()
-def gam(ansible_server: str = Argument(..., help="Generate the Alertmanager config: ansible_server=<ansible_server>")):
+def gam(ansible_server: str = Argument(..., help="Generate the Alertmanager config: ansible_server=<ansible_server_ip>")):
     """
     Generate the Alertmanager Config File (alertmanager.yml) for the Alertmanager server.
     [params: ansible_server: IP address of the Ansible server]
@@ -51,7 +72,7 @@ def gam(ansible_server: str = Argument(..., help="Generate the Alertmanager conf
     logger.info(f'Alertmanager config generated prometheus/config/alertmanager.yml: {ansible_server}')
 
 @app.command()
-def gan(nginx_server: str = Argument(..., help="Generate the Ansible Inventory File: ansible_server=<ansible_server>")):
+def gan(nginx_server: str = Argument(..., help="Generate the Ansible Inventory File: ansible_server=<ansible_server_ip>")):
     """
     Generate the Ansible Inventory File (inventory.ini) for the Ansible server.
     [params: ansible_server: IP address of the Ansible server]
