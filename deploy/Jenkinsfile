@@ -22,6 +22,9 @@ pipeline {
         }
 
         stage('Initialize Terraform') {
+            when {
+                expression { params.Options == 'Deploy' }
+            }
             steps {
                 script {
                     sh 'terraform -chdir=deploy init'
@@ -29,6 +32,9 @@ pipeline {
             }
         }
         stage('Plan Terraform') {
+            when {
+                expression { params.Options == 'Deploy' }
+            }
             steps {
                 script {
                     sh 'terraform -chdir=deploy plan -out=plan.tfplan'
@@ -37,6 +43,9 @@ pipeline {
         }
 
         stage('Apply Terraform') {
+            when {
+                expression { params.Options == 'Deploy' }
+            }
             steps {
                 script {
                     sh 'terraform -chdir=deploy apply plan.tfplan'
@@ -52,6 +61,9 @@ pipeline {
         }
 
         stage('Build Servers') {
+            when {
+                expression { params.Options == 'Deploy' }
+            }
             steps {
                 sshagent(['ec2']) {
                     script {
@@ -65,6 +77,18 @@ pipeline {
                             '''
                         }
                     }
+                }
+            }
+        }
+
+        stage('Destroy Terraform') {
+            when {
+                expression { params.Options == 'Destroy' }
+            }
+            steps {
+                script {
+                    sh 'terraform -chdir=deploy init'
+                    sh 'terraform -chdir=deploy destroy -auto-approve'
                 }
             }
         }
