@@ -7,6 +7,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN chmod 600 /app/config/ec2.pem
+
 RUN pip3 install -e .
 
 
