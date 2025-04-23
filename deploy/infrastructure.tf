@@ -36,7 +36,7 @@ resource "aws_instance" "nginx" {
   associate_public_ip_address = true
   
   tags = {
-    Name = "${var.project_name}-prometheus"
+    Name = "${var.project_name}-nginx"
   }
   key_name = var.key_name
 
@@ -52,7 +52,7 @@ resource "aws_instance" "ansible" {
   vpc_security_group_ids = [var.security_group]
   associate_public_ip_address = true
   tags = {
-    Name = "${var.project_name}-prometheus"
+    Name = "${var.project_name}-ansible"
   }
   key_name = var.key_name
 
