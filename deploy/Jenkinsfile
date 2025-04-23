@@ -43,6 +43,7 @@ pipeline {
             steps {
                 script {
                     sh 'terraform -chdir=deploy apply plan.tfplan'
+                    sh 'terraform -chdir=deploy refresh'
                     env.ANSIBLE_IP = sh(script: 'terraform -chdir=deploy output -raw ansible_ip', returnStdout: true).trim()
                     env.PROMETHEUS_IP = sh(script: 'terraform -chdir=deploy output -raw prometheus_ip', returnStdout: true).trim()
                     env.NGINX_IP = sh(script: 'terraform output -chdir=deploy -raw nginx_ip', returnStdout: true).trim()
