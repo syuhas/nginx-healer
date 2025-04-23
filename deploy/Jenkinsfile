@@ -53,15 +53,17 @@ pipeline {
 
         stage('Build Servers') {
             steps {
-                script {
-                    dir('deploy') {
-                        sh '''
-                            echo "Ansible IP: ${ANSIBLE_IP}"
-                            echo "Prometheus IP: ${PROMETHEUS_IP}"
-                            echo "NGINX IP: ${NGINX_IP}"
-                            chmod +x deploy.sh
-                            ./deploy.sh
-                        '''
+                sshagent(['ec2']) {
+                    script {
+                        dir('deploy') {
+                            sh '''
+                                echo "Ansible IP: ${ANSIBLE_IP}"
+                                echo "Prometheus IP: ${PROMETHEUS_IP}"
+                                echo "NGINX IP: ${NGINX_IP}"
+                                chmod +x deploy.sh
+                                ./deploy.sh
+                            '''
+                        }
                     }
                 }
             }
