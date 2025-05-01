@@ -1,5 +1,5 @@
 variable "project_name" {
-  default = "nginx-healer"
+  default = "self-healer"
 }
 variable "aws_region" {
   default = "us-east-1"

@@ -24,3 +24,9 @@ __pycache__/
 *.sqlite3
 *.db
 *.pem
+**/.terraform
+*.tfstate
+*.tfstate.*
+*.tfplan
+**/*.tfplan
+**/*.hcl

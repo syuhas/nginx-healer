@@ -33,21 +33,14 @@ pathprometheus = Path(f'{parentdir}/prometheus/config').resolve()
 pathansible = Path(f'{parentdir}/ansible/config').resolve()
 
 @app.command()
-# Write a help message for the command
 def gp(nginx_server: str = Argument(..., help="Generate the Prometheus config: nginx_server=<nginx_server_ip>")):
     """
     Generate the Prometheus Config File (prometheus.yml) for the Prometheus server.
     [params: nginx_server: IP address of the Nginx server]
     """
     env = Environment(loader=FileSystemLoader('jinja'))
-
-    # Load template files
     prometheus_template = env.get_template('prometheus.yml.j2')
-
     rendered_prometheus = prometheus_template.render(nginx_server=nginx_server)
-
-    # Save rendered templates to files
-
     with open(f'{pathprometheus}/prometheus.yml', 'w') as f:
         f.write(rendered_prometheus)
     logger.info(f'Prometheus config generated prometheus/config/prometheus.yml: {nginx_server}')
@@ -59,33 +52,21 @@ def gam(ansible_server: str = Argument(..., help="Generate the Alertmanager conf
     [params: ansible_server: IP address of the Ansible server]
     """
     env = Environment(loader=FileSystemLoader('jinja'))
-
-    # Load template files
     alertmanager_template = env.get_template('alertmanager.yml.j2')
-
     rendered_alertmanager = alertmanager_template.render(ansible_server=ansible_server)
-
-    # Save rendered templates to files
-
     with open(f'{pathprometheus}/alertmanager.yml', 'w') as f:
         f.write(rendered_alertmanager)
     logger.info(f'Alertmanager config generated prometheus/config/alertmanager.yml: {ansible_server}')
 
 @app.command()
-def gan(nginx_server: str = Argument(..., help="Generate the Ansible Inventory File: ansible_server=<ansible_server_ip>")):
+def gan(nginx_server: str = Argument(..., help="Generate the Ansible Inventory File: nginx_server=<nginx_server_ip>")):
     """
     Generate the Ansible Inventory File (inventory.ini) for the Ansible server.
     [params: ansible_server: IP address of the Ansible server]
     """
     env = Environment(loader=FileSystemLoader('jinja'))
-
-    # Load template files
     inventory_template = env.get_template('inventory.ini.j2')
-
     rendered_inventory = inventory_template.render(nginx_server=nginx_server)
-
-    # Save rendered templates to files
-
     with open(f'{pathansible}/inventory.ini', 'w') as f:
         f.write(rendered_inventory)
     logger.info(f'Ansible inventory file generated ansible/config/inventory.ini: {nginx_server}')

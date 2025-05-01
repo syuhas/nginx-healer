@@ -23,7 +23,7 @@ pipeline {
 
         stage('Initialize Terraform') {
             when {
-                expression { params.Options == 'Deploy' }
+                expression { params.Options == 'Deploy' || params.Options == 'RebootInstanceNginx' }
             }
             steps {
                 script {
@@ -31,9 +31,10 @@ pipeline {
                 }
             }
         }
+
         stage('Plan Terraform') {
             when {
-                expression { params.Options == 'Deploy' }
+                expression { params.Options == 'Deploy' || params.Options == 'RebootInstanceNginx' }
             }
             steps {
                 script {
@@ -44,7 +45,7 @@ pipeline {
 
         stage('Apply Terraform') {
             when {
-                expression { params.Options == 'Deploy' }
+                expression { params.Options == 'Deploy' || params.Options == 'RebootInstanceNginx' }
             }
             steps {
                 script {
@@ -53,9 +54,45 @@ pipeline {
                     env.ANSIBLE_IP = sh(script: 'terraform -chdir=deploy output -raw ansible_ip', returnStdout: true).trim()
                     env.PROMETHEUS_IP = sh(script: 'terraform -chdir=deploy output -raw prometheus_ip', returnStdout: true).trim()
                     env.NGINX_IP = sh(script: 'terraform -chdir=deploy output -raw nginx_ip', returnStdout: true).trim()
+                    env.NGINX_INSTANCE_ID = sh(script: 'terraform -chdir=deploy output -raw nginx_instance_id', returnStdout: true).trim()
+
                     echo "Ansible IP: ${env.ANSIBLE_IP}"
                     echo "Prometheus IP: ${env.PROMETHEUS_IP}"
                     echo "NGINX IP: ${env.NGINX_IP}"
+                }
+            }
+        }
+
+        stage('Reboot Nginx EC2 Instance') {
+            when {
+                expression { params.Options == 'RebootInstanceNginx' }
+            }
+            steps {
+                sshagent(['ec2']) {
+                    script {
+                        echo "Instance ID: ${env.INSTANCE_ID}"
+                        echo "AWS Region: ${env.TF_VAR_aws_region}"
+                        sh '''
+                            echo "Rebooting Nginx Instance..."
+                            aws ec2 reboot-instances --instance-ids ${INSTANCE_ID} --region ${AWS_REGION}
+                            echo "Waiting for Nginx instance to reboot..."
+                            aws ec2 wait instance-status-ok --instance-ids ${INSTANCE_ID} --region ${AWS_REGION}
+                            echo "Nginx instance is back online."
+                            echo "Waiting for Nginx instance to be healthy..."
+                            aws ec2 wait instance-status-ok --instance-ids ${INSTANCE_ID} --region ${AWS_REGION}
+                            echo "Nginx instance is healthy."
+                            echo "Restarting Containers..."
+                            echo ""
+                            ssh -o StrictHostKeyChecking=no "ec2-user@${NGINX_IP}" << EOF
+                                cd /home/ec2-user/app
+                                docker-compose build
+                                docker-compose up -d
+                                docker ps
+                                docker logs -f nginx
+                            EOF
+                            echo "Containers restarted."
+                        '''
+                    }
                 }
             }
         }
