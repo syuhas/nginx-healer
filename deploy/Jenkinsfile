@@ -67,13 +67,17 @@ pipeline {
         stage('Reboot Nginx EC2 Instance') {
             when {
                 expression { params.Options == 'RebootInstanceNginx' }
+            }
             steps {
                 sshagent(['ec2']) {
                     script {
                         dir('deploy') {
                             sh '''
-                                chmod +x reboot.sh
-                                ./reboot.sh
+                                echo "Ansible IP: ${ANSIBLE_IP}"
+                                echo "Prometheus IP: ${PROMETHEUS_IP}"
+                                echo "NGINX IP: ${NGINX_IP}"
+                                chmod +x deploy.sh
+                                ./deploy.sh
                             '''
                         }
                     }
