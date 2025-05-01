@@ -43,10 +43,20 @@ fi
 cd ..
 cd deploy
 
+
+ssh -o StrictHostKeyChecking=no "$USER@$AIP" << EOF
+    rm -Rf /home/$USER/app
+EOF
 scp -o StrictHostKeyChecking=no -r ../ansible "$USER@$AIP:/home/$USER/app"
 scp -o StrictHostKeyChecking=no build.sh "$USER@$AIP:/home/$USER/app"
+ssh -o StrictHostKeyChecking=no "$USER@$NIP" << EOF
+    rm -Rf /home/$USER/app
+EOF
 scp -o StrictHostKeyChecking=no -r ../nginx "$USER@$NIP:/home/$USER/app"
 scp -o StrictHostKeyChecking=no build.sh "$USER@$NIP:/home/$USER/app"
+ssh -o StrictHostKeyChecking=no "$USER@$PIP" << EOF
+    rm -Rf /home/$USER/app
+EOF
 scp -o StrictHostKeyChecking=no -r ../prometheus "$USER@$PIP:/home/$USER/app"
 scp -o StrictHostKeyChecking=no build.sh "$USER@$PIP:/home/$USER/app"
 
