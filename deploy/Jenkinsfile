@@ -73,9 +73,9 @@ pipeline {
                     script {
                         dir('deploy') {
                             sh '''
-                                echo "Ansible IP: ${ANSIBLE_IP}"
-                                echo "Prometheus IP: ${PROMETHEUS_IP}"
                                 echo "NGINX IP: ${NGINX_IP}"
+                                echo "NGINX Instance ID: ${NGINX_INSTANCE_ID}"
+                                echo "Rebooting NGINX Instance..."
                                 chmod +x deploy.sh
                                 ./deploy.sh
                             '''
