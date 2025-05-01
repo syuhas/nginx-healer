@@ -59,6 +59,7 @@ pipeline {
                     echo "Ansible IP: ${env.ANSIBLE_IP}"
                     echo "Prometheus IP: ${env.PROMETHEUS_IP}"
                     echo "NGINX IP: ${env.NGINX_IP}"
+                    echo "NGINX Instance ID: ${env.NGINX_INSTANCE_ID}"
                 }
             }
         }
@@ -70,16 +71,16 @@ pipeline {
             steps {
                 sshagent(['ec2']) {
                     script {
-                        echo "Instance ID: ${env.INSTANCE_ID}"
+                        echo "Instance ID: ${env.NGINX_INSTANCE_ID}"
                         echo "AWS Region: ${env.TF_VAR_aws_region}"
                         sh '''
                             echo "Rebooting Nginx Instance..."
-                            aws ec2 reboot-instances --instance-ids ${INSTANCE_ID} --region ${AWS_REGION}
+                            aws ec2 reboot-instances --instance-ids ${NGINX_INSTANCE_ID} --region ${AWS_REGION}
                             echo "Waiting for Nginx instance to reboot..."
-                            aws ec2 wait instance-status-ok --instance-ids ${INSTANCE_ID} --region ${AWS_REGION}
+                            aws ec2 wait instance-status-ok --instance-ids ${NGINX_INSTANCE_ID} --region ${AWS_REGION}
                             echo "Nginx instance is back online."
                             echo "Waiting for Nginx instance to be healthy..."
-                            aws ec2 wait instance-status-ok --instance-ids ${INSTANCE_ID} --region ${AWS_REGION}
+                            aws ec2 wait instance-status-ok --instance-ids ${NGINX_INSTANCE_ID} --region ${AWS_REGION}
                             echo "Nginx instance is healthy."
                             echo "Restarting Containers..."
                             echo ""
