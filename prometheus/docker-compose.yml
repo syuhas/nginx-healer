@@ -11,7 +11,7 @@ services:
       - monitoring
     command:
       - --web.route-prefix=/
-      - --web.external-url=http://monitoring.digitalsteve.net/prometheus/
+      - --web.external-url=http://monitor.digitalsteve.net/prometheus/
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --web.console.libraries=/usr/share/prometheus/console_libraries
