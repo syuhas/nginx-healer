@@ -76,8 +76,8 @@ pipeline {
                                 echo "NGINX IP: ${NGINX_IP}"
                                 echo "NGINX Instance ID: ${NGINX_INSTANCE_ID}"
                                 echo "Rebooting NGINX Instance..."
-                                chmod +x deploy.sh
-                                ./deploy.sh
+                                chmod +x reboot.sh
+                                ./reboot.sh
                             '''
                         }
                     }
