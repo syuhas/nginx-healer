@@ -118,7 +118,8 @@ pipeline {
                                 echo "Ansible IP: ${ANSIBLE_IP}"
                                 echo "Prometheus IP: ${PROMETHEUS_IP}"
                                 echo "NGINX IP: ${NGINX_IP}"
-                                chmod +x deploy.sh 
+                                chmod +x deploy.sh
+                                cat deploy.sh
                                 ./deploy.sh redeploy
                             '''
                         }
