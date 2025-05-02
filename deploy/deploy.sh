@@ -2,13 +2,16 @@
 
 set -x
 
-# if [ "$1" == "--dns" ]; then
-#   echo "Running with DNS configuration"
-#   # Add your DNS-specific commands here
-# elif [ "$1" == "--non-dns" ]; then
-#   echo "Running with non-DNS configuration"
-#   # Add your non-DNS-specific commands here
-# fi
+# I want to pass in a parameter, redeploy and deploy
+if [ "$1" == "redeploy" ]; then
+  echo "Redeploying..."
+  # Add your redeploy logic here
+elif [ "$1" == "deploy" ]; then
+  echo "Deploying..."
+else
+  echo "Invalid argument. Use 'redeploy' or 'deploy'."
+  exit 1
+fi
 
 # get IP addresses from terraform outputs
 AIP="${ANSIBLE_IP}"
@@ -43,23 +46,16 @@ fi
 cd ..
 cd deploy
 
+if [ "$1" == "redeploy" ]; then
+  sed -i 's|sudo docker-compose build|sudo docker-compose down\nsudo docker-compose build|' build.sh
+fi
 
+###### Ansible server ######
 ssh -o StrictHostKeyChecking=no "$USER@$AIP" << EOF
     rm -Rf /home/$USER/app
 EOF
 scp -o StrictHostKeyChecking=no -r ../ansible "$USER@$AIP:/home/$USER/app"
 scp -o StrictHostKeyChecking=no build.sh "$USER@$AIP:/home/$USER/app"
-ssh -o StrictHostKeyChecking=no "$USER@$NIP" << EOF
-    rm -Rf /home/$USER/app
-EOF
-scp -o StrictHostKeyChecking=no -r ../nginx "$USER@$NIP:/home/$USER/app"
-scp -o StrictHostKeyChecking=no build.sh "$USER@$NIP:/home/$USER/app"
-ssh -o StrictHostKeyChecking=no "$USER@$PIP" << EOF
-    rm -Rf /home/$USER/app
-EOF
-scp -o StrictHostKeyChecking=no -r ../prometheus "$USER@$PIP:/home/$USER/app"
-scp -o StrictHostKeyChecking=no build.sh "$USER@$PIP:/home/$USER/app"
-
 # build ansible server
 ssh -o StrictHostKeyChecking=no "$USER@$AIP" << EOF
     cd /home/$USER/app
@@ -67,6 +63,13 @@ ssh -o StrictHostKeyChecking=no "$USER@$AIP" << EOF
     ./build.sh
 EOF
 
+
+###### Nginx server ######
+ssh -o StrictHostKeyChecking=no "$USER@$NIP" << EOF
+    rm -Rf /home/$USER/app
+EOF
+scp -o StrictHostKeyChecking=no -r ../nginx "$USER@$NIP:/home/$USER/app"
+scp -o StrictHostKeyChecking=no build.sh "$USER@$NIP:/home/$USER/app"
 # build nginx server
 ssh -o StrictHostKeyChecking=no "$USER@$NIP" << EOF
     cd /home/$USER/app
@@ -74,6 +77,13 @@ ssh -o StrictHostKeyChecking=no "$USER@$NIP" << EOF
     ./build.sh
 EOF
 
+
+###### Prometheus server ######
+ssh -o StrictHostKeyChecking=no "$USER@$PIP" << EOF
+    rm -Rf /home/$USER/app
+EOF
+scp -o StrictHostKeyChecking=no -r ../prometheus "$USER@$PIP:/home/$USER/app"
+scp -o StrictHostKeyChecking=no build.sh "$USER@$PIP:/home/$USER/app"
 # build prometheus server
 ssh -o StrictHostKeyChecking=no "$USER@$PIP" << EOF
     cd /home/$USER/app
@@ -86,6 +96,12 @@ ssh -o StrictHostKeyChecking=no "$USER@$PIP" << EOF
     sudo systemctl start nginx
     sudo systemctl status nginx
 EOF
+
+
+
+
+
+
 
 echo "Yay!!!!"
 

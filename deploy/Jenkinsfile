@@ -23,7 +23,7 @@ pipeline {
 
         stage('Initialize Terraform') {
             when {
-                expression { params.Options == 'Deploy' || params.Options == 'RebootInstanceNginx' }
+                expression { params.Options == 'Deploy' || params.Options == 'RebootNginx' || params.Options == 'Update' }
             }
             steps {
                 script {
@@ -34,7 +34,7 @@ pipeline {
 
         stage('Plan Terraform') {
             when {
-                expression { params.Options == 'Deploy' || params.Options == 'RebootInstanceNginx' }
+                expression { params.Options == 'Deploy' || params.Options == 'RebootNginx' || params.Options == 'Update' }
             }
             steps {
                 script {
@@ -45,7 +45,7 @@ pipeline {
 
         stage('Apply Terraform') {
             when {
-                expression { params.Options == 'Deploy' || params.Options == 'RebootInstanceNginx' }
+                expression { params.Options == 'Deploy' || params.Options == 'RebootNginx' || params.Options == 'Update' }
             }
             steps {
                 script {
@@ -66,7 +66,7 @@ pipeline {
 
         stage('Reboot Nginx EC2 Instance') {
             when {
-                expression { params.Options == 'RebootInstanceNginx' }
+                expression { params.Options == 'RebootNginx' }
             }
             steps {
                 sshagent(['ec2']) {
@@ -97,7 +97,28 @@ pipeline {
                                 echo "Ansible IP: ${ANSIBLE_IP}"
                                 echo "Prometheus IP: ${PROMETHEUS_IP}"
                                 echo "NGINX IP: ${NGINX_IP}"
-                                chmod +x deploy.sh
+                                chmod +x deploy.sh deploy
+                                ./deploy.sh
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Update') {
+            when {
+                expression { params.Options == 'Update' }
+            }
+            steps {
+                sshagent(['ec2']) {
+                    script {
+                        dir('deploy') {
+                            sh '''
+                                echo "Ansible IP: ${ANSIBLE_IP}"
+                                echo "Prometheus IP: ${PROMETHEUS_IP}"
+                                echo "NGINX IP: ${NGINX_IP}"
+                                chmod +x deploy.sh redeploy
                                 ./deploy.sh
                             '''
                         }
@@ -118,9 +139,9 @@ pipeline {
             }
         }
     }
-    // post {
-    //     always {
-    //         cleanWs()
-    //     }
-    // }
+    post {
+        always {
+            cleanWs()
+        }
+    }
 }
