@@ -37,7 +37,7 @@ ssh -o StrictHostKeyChecking=no "ec2-user@${NGINX_IP}" << EOF
     docker-compose build
     docker-compose up -d
     docker ps
-    docker logs -f nginx
+    docker logs nginx
 EOF
 
 echo "Containers restarted."
