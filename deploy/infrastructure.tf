@@ -22,6 +22,8 @@ resource "aws_instance" "prometheus" {
     Name = "${var.project_name}-prometheus"
   }
   key_name = var.key_name
+  # I want to attach an imds user to this instance
+  iam_instance_profile = "arn:aws:iam::551796573889:role/admin"
 
   lifecycle {
     create_before_destroy = true

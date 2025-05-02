@@ -21,6 +21,7 @@ echo ' '
 
 echo 'Spinning up all containers...'
 echo ' '
+sudo docker-compose down
 sudo docker-compose build
 sudo docker-compose up -d
 
