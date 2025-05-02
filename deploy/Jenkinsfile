@@ -119,8 +119,8 @@ pipeline {
                                 echo "Prometheus IP: ${PROMETHEUS_IP}"
                                 echo "NGINX IP: ${NGINX_IP}"
                                 chmod +x deploy.sh
-                                cat deploy.sh
                                 ./deploy.sh redeploy
+                                cat deploy.sh
                             '''
                         }
                     }
