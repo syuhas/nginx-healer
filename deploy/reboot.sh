@@ -33,6 +33,7 @@ echo "Restarting Containers..."
 echo ""
 ssh -o StrictHostKeyChecking=no "ec2-user@${NGINX_IP}" << EOF
     cd /home/ec2-user/app
+    docker-compose down
     docker-compose build
     docker-compose up -d
     docker ps
