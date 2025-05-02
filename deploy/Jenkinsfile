@@ -120,7 +120,6 @@ pipeline {
                                 echo "NGINX IP: ${NGINX_IP}"
                                 chmod +x deploy.sh
                                 ./deploy.sh redeploy
-                                cat deploy.sh
                             '''
                         }
                     }

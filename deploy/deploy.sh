@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 # I want to pass in a parameter, redeploy and deploy
 if [ "$1" == "redeploy" ]; then
   echo "Redeploying..."
@@ -52,8 +50,11 @@ fi
 
 ###### Ansible server ######
 ssh -o StrictHostKeyChecking=no "$USER@$AIP" << EOF
+    echo "Deleting old app directory..."
     rm -Rf /home/$USER/app
+    ls /home/$USER
 EOF
+echo "Copying new app directory..."
 scp -o StrictHostKeyChecking=no -r ../ansible "$USER@$AIP:/home/$USER/app"
 scp -o StrictHostKeyChecking=no build.sh "$USER@$AIP:/home/$USER/app"
 # build ansible server
@@ -66,8 +67,11 @@ EOF
 
 ###### Nginx server ######
 ssh -o StrictHostKeyChecking=no "$USER@$NIP" << EOF
+    echo "Deleting old app directory..."
     rm -Rf /home/$USER/app
+    ls /home/$USER
 EOF
+echo "Copying new app directory..."
 scp -o StrictHostKeyChecking=no -r ../nginx "$USER@$NIP:/home/$USER/app"
 scp -o StrictHostKeyChecking=no build.sh "$USER@$NIP:/home/$USER/app"
 # build nginx server
@@ -80,8 +84,11 @@ EOF
 
 ###### Prometheus server ######
 ssh -o StrictHostKeyChecking=no "$USER@$PIP" << EOF
+    echo "Deleting old app directory..."
     rm -Rf /home/$USER/app
+    ls /home/$USER
 EOF
+echo "Copying new app directory..."
 scp -o StrictHostKeyChecking=no -r ../prometheus "$USER@$PIP:/home/$USER/app"
 scp -o StrictHostKeyChecking=no build.sh "$USER@$PIP:/home/$USER/app"
 # build prometheus server
