@@ -99,7 +99,7 @@ def reboot_nginx_instance_with_jenkins():
 
 # -------------------- AWS EC2 Instance Management --------------------
 def instance_exists(instance_id):
-    ec2 = boto3.client("ec2")
+    ec2 = boto3.client("ec2", region_name="us-east-1")
     try:
         ec2.describe_instances(InstanceIds=[instance_id])
         return True
@@ -107,7 +107,7 @@ def instance_exists(instance_id):
         return False
 
 def get_instance_id_from_ip(ip):
-    ec2 = boto3.client("ec2")
+    ec2 = boto3.client("ec2", region_name="us-east-1")
     try:
         response = ec2.describe_instances(
             Filters = [
@@ -126,7 +126,7 @@ def get_instance_id_from_ip(ip):
         return None
     
 def delete_instance(instance_id):
-    ec2 = boto3.client("ec2")
+    ec2 = boto3.client("ec2", region_name="us-east-1")
     try:
         response = ec2.terminate_instances(
             InstanceIds=[instance_id],
