@@ -8,6 +8,7 @@ import time
 from functools import wraps
 import redis
 import os
+import socket
 
 
 app = FastAPI()
@@ -38,18 +39,42 @@ def retry(max_retries=3, delay=10):
     return decorator
 
 # -------------------- Prometheus Check --------------------
-def is_nginx_up(instance_ip):
-    query = f'nginx_up{{instance="{instance_ip}:9113"}}'
+def nginx_health_checks(instance_ip: str) -> bool:
     try:
-        response = requests.get(prometheus_url, params={"query": query}, timeout=10)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(5)
+        print(f'Metric: HTTP port 80 check. Value: {sock.connect_ex((instance_ip, 80))}')
+        # print(sock.connect_ex((instance_ip, 80)))
+        if sock.connect_ex((instance_ip, 80)) != 0:
+            logger.error(f"HTTP port 80 not reachable on {instance_ip}")
+            return False
+        sock.close()
+
+        # 2. Check nginx_up == 1
+        nginx_up_query = f'nginx_up{{instance="{instance_ip}:9113"}}'
+        response = requests.get(prometheus_url, params={"query": nginx_up_query}, timeout=10)
         response.raise_for_status()
-        data = response.json()
-        value = data["data"]["result"]
-        
-        print(value)
-        return value and value[0]["value"][1] == "1"
+        result = response.json()["data"]["result"]
+        print(f'Metric: {result[0]["metric"]["__name__"]}. Value: {result[0]["value"]}')
+        if not result or result[0]["value"][1] != "1":
+            logger.error(f"nginx_up metric is not 1 for {instance_ip}")
+            return False
+
+        # 3. Check node_exporter is up
+        node_exporter_query = f'up{{job="node_exporter",instance="{instance_ip}:9100"}}'
+        response = requests.get(prometheus_url, params={"query": node_exporter_query}, timeout=10)
+        response.raise_for_status()
+        result = response.json()["data"]["result"]
+        print(f'Metric: {result[0]["metric"]["__name__"]}. Value: {result[0]["value"]}')
+        if not result or result[0]["value"][1] != "1":
+            logger.error(f"node_exporter is down or unreachable for {instance_ip}")
+            return False
+
+        logger.info(f"All health checks passed for {instance_ip}")
+        return True
+
     except Exception as e:
-        logger.error(f"Prometheus check failed: {e}")
+        logger.error(f"Health check failed for {instance_ip}: {e}")
         return False
 
 def get_nginx_ip_from_inventory(file="/app/config/inventory.ini"):
@@ -195,7 +220,7 @@ async def handle_alert(alert: dict):
             raise HTTPException(status_code=500, detail="NGINX restart failed.")
         logger.info("Waiting for health check...")
         for i in range(MAX_HEALTH_CHECKS):
-            if is_nginx_up(nginx_ip):
+            if nginx_health_checks(nginx_ip):
                 logger.success("Instance is healthy after restart")
                 return {"status": "Restart fixed the issue."}
             logger.info(f"Health check {i+1}/15 failed, retrying...")
@@ -209,7 +234,7 @@ async def handle_alert(alert: dict):
             logger.error("Reboot failed to trigger.")
         
         for i in range(MAX_HEALTH_CHECKS):
-            if is_nginx_up(nginx_ip):
+            if nginx_health_checks(nginx_ip):
                 logger.success("Instance is healthy after reboot")
                 return {"status": "Reboot fixed the issue."}
             logger.info(f"Health check {i+1}/15 failed, retrying...")
