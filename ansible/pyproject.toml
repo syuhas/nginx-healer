@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "webhook-healer-api"
+version = "0.4.0"
+description = ""
+readme = ""
+license = { text = "MIT" }
+authors = []
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "loguru",
+    "jenkinsapi",
+    "requests",
+    "boto3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+]
+
+[project.scripts]
+runserver = "run_uvicorn:run"

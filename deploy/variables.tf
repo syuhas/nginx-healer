@@ -15,7 +15,7 @@ variable "instance_type" {
 
 variable "key_name" {
   description = "Key pair name for SSH access to the EC2 instance"
-  default     = "ec2" # Replace with your key pair name
+  default     = "ec2"
 }
 variable "ami" {
   description = "AMI ID for the EC2 instance"

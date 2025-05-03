@@ -8,3 +8,16 @@ services:
       - "8000:8000"
     environment:
       - ANSIBLE_SSH_ARGS=-o StrictHostKeyChecking=no
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
