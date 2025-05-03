@@ -18,6 +18,8 @@ redis_client = redis.Redis(
     port=int(os.getenv("REDIS_PORT", 6379)),
     decode_responses=True
 )
+MAX_HEALTH_CHECKS = 15
+DELAY = 15
 
 
 # -------------------- Retry Decorator --------------------
@@ -178,27 +180,41 @@ async def handle_alert(alert: dict):
             instance = alert_item.get("labels", {}).get("instance", "unknown")
             logger.trace(f"Instance down: {instance}")
 
+        # Check if instance exists
         if not instance_id:
             logger.warning("Instance was deleted. Redeploying...")
             trigger_jenkins_job("nginx_healer", {"Options": "Update", "Branch": "origin/main"})
             return {"status": "Instance deleted. Redeployment triggered."}
 
-
+        # If instance exists, restart nginx and exporters with ansible
         if restart_nginx_with_ansible():
-            return {"status": "nginx restarted"}
+            logger.info("NGINX restarted successfully.")
+        else:
+            logger.error("NGINX restart failed.")
+            raise HTTPException(status_code=500, detail="NGINX restart failed.")
+        logger.info("Waiting for health check...")
+        for i in range(MAX_HEALTH_CHECKS):
+            if is_nginx_up(nginx_ip):
+                logger.success("Instance is healthy after restart")
+                return {"status": "Restart fixed the issue."}
+            logger.info(f"Health check {i+1}/15 failed, retrying...")
+            time.sleep(DELAY)
+        logger.error("Restart failed. Triggering reboot...")
 
+        # If restart failed, trigger jenkins reboot job
         if reboot_nginx_instance_with_jenkins():
             logger.info("Reboot triggered, waiting for health check...")
         else:
             logger.error("Reboot failed to trigger.")
         
-        for i in range(15):
+        for i in range(MAX_HEALTH_CHECKS):
             if is_nginx_up(nginx_ip):
                 logger.success("Instance is healthy after reboot")
                 return {"status": "Reboot fixed the issue."}
             logger.info(f"Health check {i+1}/15 failed, retrying...")
-            time.sleep(15)
+            time.sleep(DELAY)
 
+        # If reboot failed, delete instance and trigger redeployment
         logger.error("Reboot failed. Deleting instance and redeploying...")
         delete_instance(instance_id)
         trigger_jenkins_job("nginx_healer", {"Options": "Update", "Branch": "origin/main"})
