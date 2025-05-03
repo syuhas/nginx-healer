@@ -61,7 +61,7 @@ def get_nginx_ip_from_inventory(file="/app/config/inventory.ini"):
 
 # -------------------- Jenkins Trigger --------------------
 def get_jenkins_credentials():
-    ssm = boto3.client("ssm")
+    ssm = boto3.client("ssm", region_name="us-east-1")
     username = ssm.get_parameter(Name="/jenkins/user", WithDecryption=True)["Parameter"]["Value"]
     token = ssm.get_parameter(Name="/jenkins/token", WithDecryption=True)["Parameter"]["Value"]
     return username, token
