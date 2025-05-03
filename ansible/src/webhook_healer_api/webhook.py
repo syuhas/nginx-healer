@@ -143,7 +143,8 @@ def restart_nginx_with_ansible():
     try:
         result = subprocess.run(["ansible-playbook", "-i", "/app/config/inventory.ini", "/app/config/restart_nginx.yml"], capture_output=True, text=True)
         logger.info(result.stdout)
-        logger.error(result.stderr)
+        if result.stderr:
+            logger.error(result.stderr)
         return result.returncode == 0
     except Exception as e:
         logger.error(f"Ansible playbook execution failed: {e}")

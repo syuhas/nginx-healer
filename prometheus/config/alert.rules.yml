@@ -3,9 +3,18 @@ groups:
   rules:
   - alert: NginxDown
     expr: nginx_up == 0
-    for: 1m
+    for: 30s
     labels:
       severity: critical
     annotations:
       summary: "Nginx is down!"
       description: "Nginx on {{ $labels.instance }} is not responding."
+
+  - alert: NodesMissing
+    expr: up{job=~"node_exporter|nginx"} == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Exporter down on {{ $labels.instance }}"
+      description: "Scraping failed for job {{ $labels.job }} at {{ $labels.instance }}"
