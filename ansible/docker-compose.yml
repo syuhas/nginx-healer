@@ -1,5 +1,5 @@
 services:
-  app:
+  webhook:
     build: .
     container_name: webhook
     image: webhook:latest
