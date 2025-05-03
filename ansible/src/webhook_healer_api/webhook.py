@@ -45,6 +45,7 @@ def is_nginx_up(instance_ip):
         response.raise_for_status()
         data = response.json()
         value = data["data"]["result"]
+        
         print(value)
         return value and value[0]["value"][1] == "1"
     except Exception as e:

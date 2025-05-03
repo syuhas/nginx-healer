@@ -57,9 +57,10 @@ EOF
 echo "Copying new app directory..."
 scp -o StrictHostKeyChecking=no -r ../ansible "$USER@$AIP:/home/$USER/app"
 scp -o StrictHostKeyChecking=no build.sh "$USER@$AIP:/home/$USER/app"
-# build ansible server
+# build ansible server, only delete redis volume if taking down containers
 ssh -o StrictHostKeyChecking=no "$USER@$AIP" << EOF
     cd /home/$USER/app
+    sed -i '/docker-compose down/a docker volume rm -f \$(docker volume ls -q | grep redis)' build.sh
     chmod +x build.sh
     ./build.sh
 EOF
