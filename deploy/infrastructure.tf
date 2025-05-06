@@ -41,6 +41,7 @@ resource "aws_instance" "nginx" {
     Name = "${var.project_name}-nginx"
   }
   key_name = var.key_name
+  iam_instance_profile = "jenkinsAdmin"
 
   lifecycle {
     create_before_destroy = true
@@ -56,8 +57,8 @@ resource "aws_instance" "ansible" {
   tags = {
     Name = "${var.project_name}-ansible"
   }
-  key_name = var.key_name
-
+  key_name             = var.key_name
+  iam_instance_profile = "jenkinsAdmin"
   lifecycle {
     create_before_destroy = true
   }
