@@ -102,6 +102,15 @@ ssh -o StrictHostKeyChecking=no "$USER@$PIP" << EOF
     sudo systemctl enable nginx
     sudo systemctl start nginx
     sudo systemctl status nginx
+    sudo dnf install -y certbot-nginx && sudo dnf install -y certbot-dns-route53
+
+    if ! sudo certbot certonly --dns-route53 -d monitor.digitalsteve.net --non-interactive --agree-tos --email syuhas22@gmail.com; then
+        echo "Certbot failed to obtain a certificate. Please check your DNS settings."
+        exit 1
+    fi
+    
+    sudo systemctl restart nginx
+    sudo systemctl status nginx
 EOF
 
 
