@@ -31,3 +31,14 @@ variable "subnet_ids" {
   type = list(string)
   default = ["subnet-0823df6c43b1a0ea4", "subnet-057dcb202796ed034"]
 }
+
+variable "nginx_domain" {
+  description = "Domain name for the Nginx server"
+  default     = "ng.digitalsteve.net"
+}
+
+variable "prometheus_domain" {
+  description = "Domain name for the Prometheus server"
+  default     = "dash.digitalsteve.net"
+  
+}

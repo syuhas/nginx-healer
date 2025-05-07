@@ -15,6 +15,8 @@ fi
 AIP="${ANSIBLE_IP}"
 PIP="${PROMETHEUS_IP}"
 NIP="${NGINX_IP}"
+NGINX_DOMAIN="ng.digitalsteve.net"
+PROMETHEUS_DOMAIN="dash.digitalsteve.net"
 
 if [ -z "$AIP" ] || [ -z "$PIP" ] || [ -z "$NIP" ]; then
   echo "Error: One or more IP addresses are not set. Please check your Terraform outputs."
@@ -81,13 +83,13 @@ ssh -o StrictHostKeyChecking=no "$USER@$NIP" << EOF
 
     if [ "$FLAG" == "deploy" ]; then
       sudo dnf install -y certbot-nginx && sudo dnf install -y certbot-dns-route53
-      if ! sudo certbot certonly --dns-route53 -d nginx.digitalsteve.net --non-interactive --agree-tos --email syuhas22@gmail.com; then
+      if ! sudo certbot certonly --dns-route53 -d ${NGINX_DOMAIN} --non-interactive --agree-tos --email syuhas22@gmail.com; then
           echo "Certbot failed to obtain a certificate. Please check your DNS settings."
           exit 1
       fi
       sudo mkdir -p /home/$USER/.ssh/certs
-      sudo cp /etc/letsencrypt/live/nginx.digitalsteve.net/fullchain.pem /home/$USER/.ssh/certs/fullchain.pem
-      sudo cp /etc/letsencrypt/live/nginx.digitalsteve.net/privkey.pem /home/$USER/.ssh/certs/privkey.pem
+      sudo cp /etc/letsencrypt/live/${NGINX_DOMAIN}/fullchain.pem /home/$USER/.ssh/certs/fullchain.pem
+      sudo cp /etc/letsencrypt/live/${NGINX_DOMAIN}/privkey.pem /home/$USER/.ssh/certs/privkey.pem
       sudo chown -R $USER:$USER /home/$USER/.ssh/certs
     fi
 
@@ -118,7 +120,7 @@ ssh -o StrictHostKeyChecking=no "$USER@$PIP" << EOF
 
     if [ "$FLAG" == "deploy" ]; then
       sudo dnf install -y certbot-nginx && sudo dnf install -y certbot-dns-route53
-      if ! sudo certbot certonly --dns-route53 -d monitor.digitalsteve.net --non-interactive --agree-tos --email syuhas22@gmail.com; then
+      if ! sudo certbot certonly --dns-route53 -d ${PROMETHEUS_DOMAIN} --non-interactive --agree-tos --email syuhas22@gmail.com; then
           echo "Certbot failed to obtain a certificate. Please check your DNS settings."
           exit 1
       fi

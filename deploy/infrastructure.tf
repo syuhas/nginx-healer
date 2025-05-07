@@ -64,18 +64,18 @@ resource "aws_instance" "ansible" {
   }
 }
 
-resource "aws_route53_record" "monitor" {
+resource "aws_route53_record" "prometheus_dns" {
   zone_id = "Z02299283BLAIJGG9JHMK"
-  name    = "monitor.digitalsteve.net"
+  name    = "${var.prometheus_domain}"
   type    = "A"
   ttl     = 300
   records = [aws_instance.prometheus.public_ip]
 
 }
 
-resource "aws_route53_record" "nginx" {
+resource "aws_route53_record" "nginx_dns" {
   zone_id = "Z02299283BLAIJGG9JHMK"
-  name    = "nginx.digitalsteve.net"
+  name    = "${var.nginx_domain}"
   type    = "A"
   ttl     = 300
   records = [aws_instance.nginx.public_ip]
