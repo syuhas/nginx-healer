@@ -30,7 +30,9 @@
             text-transform: uppercase;
             letter-spacing: 3px;
             text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 1s ease-in-out;
+            animation: fadeIn .75s ease-in-out;
+            font-family: monospace;
+            text-decoration: underline;
         }
 
         h2 {
@@ -41,7 +43,9 @@
             color: #FFFFFF;
             font-weight: normal;
             text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.6);
-            animation: fadeIn 1.5s ease-in-out;
+            animation: fadeIn .75s ease-in-out;
+            animation-delay: .15s;
+            font-family: monospace;
         }
 
         .card-deck {
@@ -201,6 +205,18 @@
                         <i class="fas fa-bell"></i>
                         <h3 class="card-title">AlertManager</h3>
                         <p class="card-text">Manage sending alerts and notifications.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-deck mt-4">
+            <!-- Nginx Card -->
+            <div class="card">
+                <div class="card-body">
+                    <a href="https://nginx.digitalsteve.net" target="_blank">
+                        <i class="fas fa-globe"></i>
+                        <h3 class="card-title">Nginx</h3>
+                        <p class="card-text">Web server target for testing.</p>
                     </a>
                 </div>
             </div>

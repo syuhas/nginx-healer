@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Nginx Test Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f3f4f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px 0;
+        }
+        h1 {
+            margin: 0;
+        }
+        main {
+            padding: 20px;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to the NGINX target testing server!!</h1>
+    </header>
+    <main>
+        <p>If you see this page, your NGINX server is up and running.</p>
+        <p>This project was designed to test the capabilites of using Ansible, Prometheus and AWS to design a custom self-healing infrastructure.</p>
+        <p>If this server goes down at any point, the automation will kick in via Alert Manager and fire the webhook to detect the failure and fix the issue.</p>
+        <p><a href="https://monitor.digitalsteve.net" target="_blank">View the monitoring suite here.</a></p>
+    </main>
+    <footer>
+        <p>&copy; 2023 Nginx Test Server</p>
+    </footer>
+</body>
+</html>

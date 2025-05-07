@@ -57,10 +57,9 @@ EOF
 echo "Copying new app directory..."
 scp -o StrictHostKeyChecking=no -r ../ansible "$USER@$AIP:/home/$USER/app"
 scp -o StrictHostKeyChecking=no build.sh "$USER@$AIP:/home/$USER/app"
-# build ansible server, only delete redis volume if taking down containers
+# build ansible server
 ssh -o StrictHostKeyChecking=no "$USER@$AIP" << EOF
     cd /home/$USER/app
-    sed -i '/docker-compose down/a docker volume rm -f \$(docker volume ls -q | grep redis)' build.sh
     chmod +x build.sh
     ./build.sh
 EOF
@@ -75,9 +74,25 @@ EOF
 echo "Copying new app directory..."
 scp -o StrictHostKeyChecking=no -r ../nginx "$USER@$NIP:/home/$USER/app"
 scp -o StrictHostKeyChecking=no build.sh "$USER@$NIP:/home/$USER/app"
+FLAG="$1"
 # build nginx server
 ssh -o StrictHostKeyChecking=no "$USER@$NIP" << EOF
     cd /home/$USER/app
+
+    if [ "$FLAG" == "deploy" ]; then
+      sudo dnf install -y certbot-nginx && sudo dnf install -y certbot-dns-route53
+      if ! sudo certbot certonly --dns-route53 -d nginx.digitalsteve.net --non-interactive --agree-tos --email syuhas22@gmail.com; then
+          echo "Certbot failed to obtain a certificate. Please check your DNS settings."
+          exit 1
+      fi
+      sudo mkdir -p /home/$USER/.ssh/certs
+      sudo cp /etc/letsencrypt/live/nginx.digitalsteve.net/fullchain.pem /home/$USER/.ssh/certs/fullchain.pem
+      sudo cp /etc/letsencrypt/live/nginx.digitalsteve.net/privkey.pem /home/$USER/.ssh/certs/privkey.pem
+      sudo chown -R $USER:$USER /home/$USER/.ssh/certs
+    fi
+
+    sudo cp /home/$USER/.ssh/certs/fullchain.pem /home/$USER/app/fullchain.pem
+    sudo cp /home/$USER/.ssh/certs/privkey.pem /home/$USER/app/privkey.pem
     chmod +x build.sh
     ./build.sh
 EOF
@@ -100,6 +115,15 @@ ssh -o StrictHostKeyChecking=no "$USER@$PIP" << EOF
     sudo dnf install -y nginx
     sudo cp nginx/default.conf /etc/nginx/conf.d/default.conf
     sudo cp nginx/index.html /usr/share/nginx/html/index.html
+
+    if [ "$FLAG" == "deploy" ]; then
+      sudo dnf install -y certbot-nginx && sudo dnf install -y certbot-dns-route53
+      if ! sudo certbot certonly --dns-route53 -d monitor.digitalsteve.net --non-interactive --agree-tos --email syuhas22@gmail.com; then
+          echo "Certbot failed to obtain a certificate. Please check your DNS settings."
+          exit 1
+      fi
+    fi
+
     sudo systemctl enable nginx
     sudo systemctl start nginx
     sudo systemctl status nginx
@@ -112,4 +136,3 @@ EOF
 
 
 echo "Yay!!!!"
-
